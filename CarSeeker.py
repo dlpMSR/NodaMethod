@@ -5,6 +5,7 @@ import math
 import glob
 import cv2
 import sqlite3
+import json
 
 from darkflow.net.build import TFNet
 
@@ -21,13 +22,14 @@ class CarSeeker():
         self.path = path
         self.outputpath = ''
         self.labelname = 'label.db'
+        self.outputfilename = 'output.json'
         self.result_dict = {}
 
 
     def test_method(self):
         self.setup()
         self.matomete(self.path)
-        print(self.result_dict)
+        self.save(self.result_dict)
 
 
     def setup(self):
@@ -50,6 +52,12 @@ class CarSeeker():
         for image in targets:
             self.nodamethod(image)
             print(image)
+
+
+    def save(self, result_dict):
+        outputfilepath = os.path.join(self.outputpath, self.outputfilename)
+        with open(outputfilepath, 'w') as f:
+            json.dump(result_dict, f, indent=4, separators=(',',':'))
 
 
     def nodamethod(self, input_image):
@@ -121,6 +129,7 @@ class CarSeeker():
         cv2.circle(img, (center[0], center[1]), 15, (255, 255, 0), -1)
 
     def _getlabel(self, filename):
+        #DBに登録が無かったときには警告を出さないと(´･_･`)
         labelpath = os.path.join('./', self.labelname)
         conn = sqlite3.connect(labelpath)
         c = conn.cursor()
