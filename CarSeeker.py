@@ -107,7 +107,7 @@ class CarSeeker():
                     text = label + " {0:.2f}".format(confidence)
                     k = [img,
                          topleft_x, topleft_y,
-                         bottomright_x, bottomright_x,
+                         bottomright_x, bottomright_y,
                          center, text]
                     self._writein(*k)
         output_dict[filename]["num_of_points"] = num_of_points
