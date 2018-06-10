@@ -4,6 +4,7 @@ import numpy
 import math
 import glob
 import cv2
+import sqlite3
 
 from darkflow.net.build import TFNet
 
@@ -19,6 +20,7 @@ class CarSeeker():
     def __init__(self, path):
         self.path = path
         self.outputpath = ''
+        self.labelname = 'label.db'
         self.result_dict = {}
 
 
@@ -119,8 +121,15 @@ class CarSeeker():
         cv2.circle(img, (center[0], center[1]), 15, (255, 255, 0), -1)
 
     def _getlabel(self, filename):
-        #後で考える(´･_･`)
-        return 0
+        labelpath = os.path.join('./', self.labelname)
+        conn = sqlite3.connect(labelpath)
+        c = conn.cursor()
+        sql = "select * from images where filename = '%s'" % filename
+        c.execute(sql)
+        for raw in c:
+            label = raw[1]
+        conn.close
+        return label 
 
 
 def main(arg0):
