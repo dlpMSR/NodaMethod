@@ -6,6 +6,7 @@ import glob
 import cv2
 import sqlite3
 import json
+import csv
 
 from darkflow.net.build import TFNet
 
@@ -21,8 +22,9 @@ class CarSeeker():
     def __init__(self, path):
         self.path = path
         self.outputpath = ''
-        self.labelname = 'label_M_b.db'
+        self.labelname = 'label.db'
         self.outputfilename = 'output.json'
+        self.outputfilename_csv = 'output.csv'
         self.result_dict = {}
 
 
@@ -30,6 +32,7 @@ class CarSeeker():
         self.setup()
         self.matomete(self.path)
         self.save(self.result_dict)
+        self.save_ascsv(self.result_dict)
 
 
     def setup(self):
@@ -59,6 +62,22 @@ class CarSeeker():
         with open(outputfilepath, 'w') as f:
             json.dump(result_dict, f, indent=4, separators=(',',':'))
 
+    def save_ascsv(self, result_dict):
+        outputfilepath = os.path.join(self.outputpath, self.outputfilename_csv)
+        with open(outputfilepath, 'w') as f:
+            writer = csv.writer(f, lineterminator='\n')
+            top = ['filename','label']
+            writer.writerow(top)
+            
+            for item in result_dict:
+                list_row = []
+                list_row.append(item)
+                list_row.append(result_dict[item]['label'])
+                for point in result_dict[item]['points']:
+                    list_row.append(result_dict[item]['points'][point]['x'])
+                    list_row.append(result_dict[item]['points'][point]['y'])
+                writer.writerow(list_row)
+                
 
     def nodamethod(self, input_image):
         img = cv2.imread(input_image)
