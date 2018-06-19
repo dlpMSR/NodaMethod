@@ -21,7 +21,7 @@ class CarSeeker():
     def __init__(self, path):
         self.path = path
         self.outputpath = ''
-        self.labelname = 'label.db'
+        self.labelname = 'label_M_b.db'
         self.outputfilename = 'output.json'
         self.result_dict = {}
 
@@ -69,6 +69,7 @@ class CarSeeker():
                            "width":width,
                            "height":height,
                            "num_of_points":0,
+                           "points":{}
                            }
                       }
         result = tfnet.return_predict(img)
@@ -103,7 +104,7 @@ class CarSeeker():
                                     "size":int(size)
                                     }
                                }
-                    output_dict[filename].update(d_center)
+                    output_dict[filename]["points"].update(d_center)
                     text = label + " {0:.2f}".format(confidence)
                     k = [img,
                          topleft_x, topleft_y,
