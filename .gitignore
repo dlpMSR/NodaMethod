@@ -15,7 +15,7 @@ matomete2.py
 test.py
 
 
-label.db
+*.db
 label1.csv
 
 yolo.weights
