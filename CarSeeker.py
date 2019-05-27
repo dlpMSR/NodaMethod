@@ -7,6 +7,7 @@ import cv2
 import sqlite3
 import json
 import csv
+from tqdm import tqdm
 
 from darkflow.net.build import TFNet
 
@@ -49,9 +50,8 @@ class CarSeeker():
         targets = glob.glob(os.path.join(inputpath, '*.jpg'))
         num_of_images = len(targets)
         print("There are {} images in the specified folder...".format(num_of_images))
-        for image in targets:
+        for image in tqdm(targets):
             self.nodamethod(image)
-            print(image)
 
     def save(self, result_dict):
         outputfilepath = os.path.join(self.outputpath, self.outputfilename)
@@ -152,7 +152,6 @@ class CarSeeker():
             for raw in c:
                 label = raw[1]
         except sqlite3.OperationalError:
-            print("There is no registration in the database")
             label = 'null'
         conn.close
         return label 
