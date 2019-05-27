@@ -36,19 +36,19 @@ class CarSeeker():
     def setup(self):
         self.outputpath = os.path.join(self.path, 'output/')
         if os.path.exists(self.outputpath) == False:
-            print("出力フォルダがありません．新たに作成してもいいですか？[y/n]")
+            print("There is no output folder. Do you want create new one?[y/n]")
             ans = input('>>')
             if ans == 'y':
                 os.mkdir(self.outputpath)
-                print("出力フォルダを作成しました．%s" % self.outputpath)
+                print("New output folder was created!%s" % self.outputpath)
             else:
-                print("やめます")
+                print("Processing was interrupted.")
                 sys.exit(1)
             
     def matomete(self, inputpath):
         targets = glob.glob(os.path.join(inputpath, '*.jpg'))
         num_of_images = len(targets)
-        print("{}枚の画像があります．．．".format(num_of_images))
+        print("There are {} images in the specified folder...".format(num_of_images))
         for image in targets:
             self.nodamethod(image)
             print(image)
@@ -143,7 +143,6 @@ class CarSeeker():
         cv2.circle(img, (center[0], center[1]), 15, (255, 255, 0), -1)
 
     def _getlabel(self, filename):
-        #DBに登録が無かったときには警告を出さないと(´･_･`)
         labelpath = os.path.join('./', self.labelname)
         conn = sqlite3.connect(labelpath)
         c = conn.cursor()
@@ -153,7 +152,7 @@ class CarSeeker():
             for raw in c:
                 label = raw[1]
         except sqlite3.OperationalError:
-            print("データベースに登録がありません．")
+            print("There is no registration in the database")
             label = 'null'
         conn.close
         return label 
