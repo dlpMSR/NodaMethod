@@ -27,13 +27,11 @@ class CarSeeker():
         self.outputfilename_csv = 'output.csv'
         self.result_dict = {}
 
-
     def test_method(self):
         self.setup()
         self.matomete(self.path)
         self.save(self.result_dict)
         self.save_ascsv(self.result_dict)
-
 
     def setup(self):
         self.outputpath = os.path.join(self.path, 'output/')
@@ -46,8 +44,7 @@ class CarSeeker():
             else:
                 print("やめます")
                 sys.exit(1)
-        
-    
+            
     def matomete(self, inputpath):
         targets = glob.glob(os.path.join(inputpath, '*.jpg'))
         num_of_images = len(targets)
@@ -55,7 +52,6 @@ class CarSeeker():
         for image in targets:
             self.nodamethod(image)
             print(image)
-
 
     def save(self, result_dict):
         outputfilepath = os.path.join(self.outputpath, self.outputfilename)
@@ -78,7 +74,6 @@ class CarSeeker():
                     list_row.append(result_dict[item]['points'][point]['y'])
                 writer.writerow(list_row)
                 
-
     def nodamethod(self, input_image):
         img = cv2.imread(input_image)
         filename = os.path.basename(input_image)
@@ -135,7 +130,6 @@ class CarSeeker():
         cv2.imwrite(os.path.join(self.outputpath, filename), img)
         self.result_dict.update(output_dict)
 
-
     def _distance(self, x1, y1, x2, y2):
         xd = x2 - x1
         yd = y2 - y1 
@@ -154,9 +148,13 @@ class CarSeeker():
         conn = sqlite3.connect(labelpath)
         c = conn.cursor()
         sql = "select * from images where filename = '%s'" % filename
-        c.execute(sql)
-        for raw in c:
-            label = raw[1]
+        try:
+            c.execute(sql)
+            for raw in c:
+                label = raw[1]
+        except sqlite3.OperationalError:
+            print("データベースに登録がありません．")
+            label = 'null'
         conn.close
         return label 
 
